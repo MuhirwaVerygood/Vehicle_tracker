@@ -51,7 +51,8 @@ public class SecurityConfiguration {
                 .authorizeHttpRequests(req ->
                         req.requestMatchers(WHITE_LIST_URL)
                                 .permitAll()
-                                .requestMatchers("/api/v1/management/**").hasAnyRole(ADMIN.name(), STANDARD.name())
+                                .requestMatchers("/api/v1/owners/**").hasAnyRole(ADMIN.name())
+                                .requestMatchers("/api/v1/owners/**").hasAnyAuthority(ADMIN_CREATE.name())
                                 .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), STANDARD_READ.name())
                                 .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_CREATE.name(), STANDARD_CREATE.name())
                                 .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN_UPDATE.name(), STANDARD_UPDATE.name())

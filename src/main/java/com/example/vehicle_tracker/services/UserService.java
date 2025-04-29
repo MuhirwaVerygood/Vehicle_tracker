@@ -5,11 +5,11 @@ import com.example.vehicle_tracker.dto.AuthenticationRequest;
 import com.example.vehicle_tracker.dto.AuthenticationResponse;
 import com.example.vehicle_tracker.dto.ChangePasswordRequest;
 import com.example.vehicle_tracker.dto.RegisterRequest;
+import com.example.vehicle_tracker.exceptions.UserAlreadyExistsException;
 import com.example.vehicle_tracker.models.User;
 import com.example.vehicle_tracker.repositories.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.coyote.BadRequestException;
 import org.slf4j.Logger;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,6 +19,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.security.Principal;
+import java.util.Optional;
 
 @Slf4j
 @Service
@@ -33,6 +34,11 @@ public class UserService {
 
 
     public AuthenticationResponse register(RegisterRequest request){
+        Optional<User> userExists = repository.findByEmail(request.getEmail());
+        if(userExists.isPresent()){
+            throw new UserAlreadyExistsException("User with that email already exists");
+        }
+
         var user = User
                 .builder()
                 .lastName(request.getLastName())
@@ -102,6 +108,7 @@ public class UserService {
                   .accessToken(accessToken)
                   .refreshToken(refreshToken)
                   .build();
+
       }catch (BadCredentialsException e){
           throw new BadCredentialsException("Invalid email or password");
       }

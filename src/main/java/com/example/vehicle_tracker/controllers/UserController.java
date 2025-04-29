@@ -4,6 +4,7 @@ import com.example.vehicle_tracker.dto.AuthenticationResponse;
 import com.example.vehicle_tracker.dto.ChangePasswordRequest;
 import com.example.vehicle_tracker.dto.RegisterRequest;
 import com.example.vehicle_tracker.services.UserService;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,15 +20,14 @@ public class UserController {
     private final UserService service;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthenticationResponse> register(@RequestBody RegisterRequest request){
+    public ResponseEntity<AuthenticationResponse> register( @Valid  @RequestBody RegisterRequest request){
      return ResponseEntity.ok(service.register(request));
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthenticationResponse> login(@RequestBody AuthenticationRequest request){
+    public ResponseEntity<AuthenticationResponse> login( @Valid @RequestBody AuthenticationRequest request){
         return ResponseEntity.ok(service.authenticate(request));
     }
-
 
 
     @PatchMapping
@@ -38,10 +38,6 @@ public class UserController {
         service.changePassword(request, connectedUser);
         return ResponseEntity.ok().build();
     }
-
-
-
-
 
 
 }

@@ -20,10 +20,10 @@ public class Owner {
     private Integer id;
     private String ownerNames;
     private int nationalId;
-    private int phoneNumber;
+    private String phoneNumber;
     @Embedded
     private Address address;
 
-    @OneToMany(mappedBy = "owner")
+    @OneToMany(mappedBy = "owner"  , cascade = CascadeType.ALL)
     private List<Plate> plates;
 }

@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.util.List;
 
@@ -27,8 +26,8 @@ public class User implements UserDetails {
     private Integer id;
     private String firstName;
     private String lastName;
-    private int phoneNumber;
-    private int nationalId;
+    private String phoneNumber;
+    private String nationalId;
     @Email
     @NotNull
     private String email;
