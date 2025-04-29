@@ -10,7 +10,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/owners")
+@RequestMapping("/api/v1/owners")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
 public class AdminController {
@@ -25,6 +25,10 @@ public class AdminController {
     }
 
 
-
+    @GetMapping
+    @PreAuthorize("hasAuthority('admin:read')")
+    public ResponseEntity<String> authenticate(){
+        return ResponseEntity.ok("Hello world");
+    }
 
 }

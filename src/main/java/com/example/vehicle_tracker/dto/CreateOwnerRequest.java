@@ -4,8 +4,6 @@ import com.example.vehicle_tracker.models.Address;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import lombok.*;
-
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 

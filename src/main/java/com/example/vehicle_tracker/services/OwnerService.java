@@ -1,5 +1,4 @@
 package com.example.vehicle_tracker.services;
-
 import com.example.vehicle_tracker.dto.CreateOwnerRequest;
 import com.example.vehicle_tracker.models.Owner;
 import com.example.vehicle_tracker.models.Plate;
@@ -7,7 +6,6 @@ import com.example.vehicle_tracker.repositories.OwnerRepository;
 import com.example.vehicle_tracker.repositories.PlateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -19,15 +17,16 @@ public class OwnerService {
     private final OwnerRepository ownerRepository;
     private final PlateRepository plateRepository;
 
-    @Transactional
+    // @Transactional
     public Owner createOwner(CreateOwnerRequest request) {
         // Convert request to Owner entity
         Owner owner = Owner.builder()
                 .ownerNames(request.getOwnerNames())
-                .nationalId(Integer.parseInt(request.getNationalId()))
+                .nationalId(request.getNationalId())
                 .phoneNumber(request.getPhoneNumber())
                 .address(request.getAddress().toAddress())
                 .build();
+
 
 
         var savedOwner = ownerRepository.save(owner);

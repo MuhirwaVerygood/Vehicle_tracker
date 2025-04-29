@@ -19,7 +19,7 @@ public class Owner {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "owner_seq")
     private Integer id;
     private String ownerNames;
-    private int nationalId;
+    private String nationalId;
     private String phoneNumber;
     @Embedded
     private Address address;
