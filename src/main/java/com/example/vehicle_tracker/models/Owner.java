@@ -1,10 +1,8 @@
 package com.example.vehicle_tracker.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -15,7 +13,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Owner {
     @Id
-    @SequenceGenerator(name = "owner_seq" , allocationSize = 1)
+    @SequenceGenerator(name = "owner_seq" , sequenceName = "owner_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "owner_seq")
     private Integer id;
     private String ownerNames;
@@ -24,6 +22,17 @@ public class Owner {
     @Embedded
     private Address address;
 
-    @OneToMany(mappedBy = "owner"  , cascade = CascadeType.ALL)
+    @JsonIgnore
+    @OneToMany(mappedBy = "owner"  , cascade = CascadeType.ALL , orphanRemoval = true )
     private List<Plate> plates;
+
+
+    @OneToMany(mappedBy = "owner"  , cascade = CascadeType.ALL , orphanRemoval = true )
+    private List<Vehicle> vehicles;
+
+
+    public void addPlate(Plate plate){
+        plates.add(plate);
+        plate.setOwner(this);
+    }
 }

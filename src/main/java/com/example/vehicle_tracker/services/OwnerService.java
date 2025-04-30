@@ -4,9 +4,13 @@ import com.example.vehicle_tracker.models.Owner;
 import com.example.vehicle_tracker.models.Plate;
 import com.example.vehicle_tracker.repositories.OwnerRepository;
 import com.example.vehicle_tracker.repositories.PlateRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,33 +21,31 @@ public class OwnerService {
     private final OwnerRepository ownerRepository;
     private final PlateRepository plateRepository;
 
-    // @Transactional
-    public Owner createOwner(CreateOwnerRequest request) {
-        // Convert request to Owner entity
-        Owner owner = Owner.builder()
-                .ownerNames(request.getOwnerNames())
-                .nationalId(request.getNationalId())
-                .phoneNumber(request.getPhoneNumber())
-                .address(request.getAddress().toAddress())
-                .build();
+     @Transactional
+    public ResponseEntity<?> createOwner(CreateOwnerRequest request) {
+         var owner =  Owner
+                 .builder()
+                 .ownerNames(request.getOwnerNames())
+                 .plates(new ArrayList<>())
+                 .address(request.getAddress().toAddress())
+                 .nationalId(request.getNationalId())
+                 .phoneNumber(request.getPhoneNumber())
+                 .build();
 
+         var savedOwner =   ownerRepository.save(owner);
 
+        List<Plate> plates =   request.getPlates().stream().map(plateRequest -> {
+             Plate plate = Plate.builder()
+                     .plateNumber(plateRequest.getPlateNumber())
+                     .issuedDate(plateRequest.getIssuedDate())
+                     .owner(savedOwner)
+                     .build();
+             return plate;
+         }).collect(Collectors.toList());
 
-        var savedOwner = ownerRepository.save(owner);
-
-        if(request.getPlates() != null && !request.getPlates().isEmpty()) {
-            List<Plate> plates = request.getPlates().stream()
-                    .map(plateReq -> Plate.builder()
-                            .plateNumber(plateReq.getPlateNumber())
-                            .issuedDate(plateReq.getIssuedDate())
-                            .owner(savedOwner)
-                            .build())
-                    .collect(Collectors.toList());
-
-            plateRepository.saveAll(plates);
-        }
-
-        // Save the owner
-        return savedOwner;
+        plateRepository.saveAll(plates);
+        savedOwner.setPlates(plates);
+        return ResponseEntity.status(HttpStatus.CONFLICT).body(savedOwner);
     }
+
 }

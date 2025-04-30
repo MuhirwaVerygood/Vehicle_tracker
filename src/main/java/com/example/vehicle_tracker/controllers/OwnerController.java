@@ -13,15 +13,14 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/api/v1/owners")
 @RequiredArgsConstructor
 @PreAuthorize("hasRole('ADMIN')")
-public class AdminController {
+public class OwnerController {
 
     private final OwnerService ownerService;
 
     @PostMapping
     @PreAuthorize("hasAuthority('admin:create')")
-    public ResponseEntity<Owner> createOwner(@Valid @RequestBody CreateOwnerRequest request) {
-        Owner createdOwner = ownerService.createOwner(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(createdOwner);
+    public ResponseEntity<?> createOwner(@Valid @RequestBody CreateOwnerRequest request) {
+        return ownerService.createOwner(request);
     }
 
 

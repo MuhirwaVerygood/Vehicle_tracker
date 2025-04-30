@@ -1,10 +1,8 @@
 package com.example.vehicle_tracker.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.Date;
 
@@ -15,12 +13,19 @@ import java.util.Date;
 @NoArgsConstructor
 public class Plate {
     @Id
-    @SequenceGenerator(name = "plate-seq" , allocationSize = 1)
+    @SequenceGenerator(name = "plate-seq" , sequenceName = "plate-seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE , generator = "plate-seq")
     private Integer plateId;
+
+    @JsonIgnore
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id",  nullable = false)
     private Owner owner;
     private String plateNumber;
     private Date issuedDate;
+
+    @OneToOne
+    @JoinColumn(name = "vehicle-id" , referencedColumnName = "vehicleId")
+    private Vehicle vehicle;
 }
+

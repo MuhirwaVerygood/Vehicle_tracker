@@ -6,4 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface PlateRepository extends JpaRepository<Plate, Integer> {
+
 }

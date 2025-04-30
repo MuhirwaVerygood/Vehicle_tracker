@@ -21,7 +21,7 @@ import java.util.List;
 @Table(name = "_user")
 public class User implements UserDetails {
     @Id
-    @SequenceGenerator(name = "users-seq" , allocationSize = 1)
+    @SequenceGenerator(name = "users-seq" , sequenceName = "users-seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE , generator =  "users-seq")
     private Integer id;
     private String firstName;

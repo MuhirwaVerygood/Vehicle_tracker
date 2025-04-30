@@ -1,10 +1,6 @@
 package com.example.vehicle_tracker.services;
 import com.example.vehicle_tracker.config.JwtService;
-import com.example.vehicle_tracker.dto.AuthenticationRequest;
-import com.example.vehicle_tracker.dto.AuthenticationResponse;
-import com.example.vehicle_tracker.dto.ChangePasswordRequest;
-import com.example.vehicle_tracker.dto.RegisterRequest;
-import com.example.vehicle_tracker.dto.TokenType;
+import com.example.vehicle_tracker.dto.*;
 import com.example.vehicle_tracker.exceptions.UserAlreadyExistsException;
 import com.example.vehicle_tracker.models.Token;
 import com.example.vehicle_tracker.models.User;
@@ -15,6 +11,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -34,13 +32,12 @@ public class AuthenticationService {
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
 
-  public AuthenticationResponse register(RegisterRequest request) {
+  public ResponseEntity<?> register(RegisterRequest request) {
      Optional<User> userExists = repository.findByEmail(request.getEmail());
 
 
         if(userExists.isPresent()){
-            System.out.println(request.getPassword());
-            throw new UserAlreadyExistsException("User with that email already exists");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse("User with that email already exists", 409 ));
         }
 
         var user = User
@@ -59,30 +56,33 @@ public class AuthenticationService {
     var jwtToken = jwtService.generateToken(user);
     var refreshToken = jwtService.generateRefreshToken(user);
     saveUserToken(savedUser, jwtToken);
-    return AuthenticationResponse.builder()
-        .accessToken(jwtToken)
-            .refreshToken(refreshToken)
-        .build();
+    return ResponseEntity.status(HttpStatus.CREATED).body(new AuthenticationResponse(jwtToken, refreshToken));
   }
 
-  public AuthenticationResponse authenticate(AuthenticationRequest request) {
+
+
+  public ResponseEntity<?> authenticate(AuthenticationRequest request) {
     authenticationManager.authenticate(
         new UsernamePasswordAuthenticationToken(
             request.getEmail(),
             request.getPassword()
         )
     );
-    var user = repository.findByEmail(request.getEmail())
-    .orElseThrow(()-> new UsernameNotFoundException("Invalid email or password"));
+    Optional<User> user = repository.findByEmail(request.getEmail());
+    if(user.isEmpty()){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Invalid email or password" , 401 ));
+    }
 
-    var jwtToken = jwtService.generateToken(user);
-    var refreshToken = jwtService.generateRefreshToken(user);
-    revokeAllUserTokens(user);
-    saveUserToken(user, jwtToken);
-    return AuthenticationResponse.builder()
-        .accessToken(jwtToken)
-            .refreshToken(refreshToken)
-        .build();
+    var jwtToken = jwtService.generateToken(user.get());
+    var refreshToken = jwtService.generateRefreshToken(user.get());
+    revokeAllUserTokens(user.get());
+    saveUserToken(user.get(), jwtToken);
+    return ResponseEntity.status(HttpStatus.OK).body(
+            AuthenticationResponse.builder()
+                    .accessToken(jwtToken)
+                    .refreshToken(refreshToken)
+                    .build()
+    );
   }
 
   private void saveUserToken(User user, String jwtToken) {
