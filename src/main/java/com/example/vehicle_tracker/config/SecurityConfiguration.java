@@ -52,6 +52,8 @@ public class SecurityConfiguration {
                                 .permitAll()
                                 .requestMatchers("/api/v1/owners/**").hasAnyRole(ADMIN.name())
                                 .requestMatchers("/api/v1/owners/**").hasAnyAuthority(ADMIN_CREATE.name())
+                                .requestMatchers("/api/v1/plates/**").hasAnyRole(ADMIN.name())
+                                .requestMatchers("/api/v1/plates/**").hasAnyAuthority(ADMIN_CREATE.name())
                                 .requestMatchers(GET, "/api/v1/management/**").hasAnyAuthority(ADMIN_READ.name(), STANDARD_READ.name())
                                 .requestMatchers(POST, "/api/v1/management/**").hasAnyAuthority(ADMIN_CREATE.name(), STANDARD_CREATE.name())
                                 .requestMatchers(PUT, "/api/v1/management/**").hasAnyAuthority(ADMIN_UPDATE.name(), STANDARD_UPDATE.name())

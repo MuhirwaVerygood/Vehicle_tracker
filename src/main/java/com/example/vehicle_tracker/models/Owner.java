@@ -31,6 +31,10 @@ public class Owner {
     private List<Vehicle> vehicles;
 
 
+    @OneToMany(mappedBy = "owner", cascade = CascadeType.ALL)
+    private List<OwnershipHistory> ownershipHistory;
+
+
     public void addPlate(Plate plate){
         plates.add(plate);
         plate.setOwner(this);

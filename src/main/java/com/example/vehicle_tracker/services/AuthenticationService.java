@@ -37,7 +37,7 @@ public class AuthenticationService {
 
 
         if(userExists.isPresent()){
-            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse("User with that email already exists", 409 ));
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse("User with that email already exists", HttpStatus.CONFLICT.value() ));
         }
 
         var user = User
@@ -70,7 +70,7 @@ public class AuthenticationService {
     );
     Optional<User> user = repository.findByEmail(request.getEmail());
     if(user.isEmpty()){
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Invalid email or password" , 401 ));
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(new ErrorResponse("Invalid email or password" , HttpStatus.UNAUTHORIZED.value() ));
     }
 
     var jwtToken = jwtService.generateToken(user.get());

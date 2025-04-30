@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity
 @Data
 @Builder
@@ -24,13 +26,19 @@ public class Vehicle {
 
     @JsonIgnore
     @ManyToOne()
-    @JoinColumn(name = "owner_id" , referencedColumnName = "id")
+    @JoinColumn(name = "owner_id" , referencedColumnName = "id" , nullable = true)
     private Owner owner;
 
+    @JsonIgnore
     @OneToOne
-    @JoinColumn(name = "plate_id" , referencedColumnName = "plateId")
+    @JoinColumn(name = "plate_id" , referencedColumnName = "plateId" , nullable = true)
     private  Plate plate;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "vehicle", cascade = CascadeType.ALL)
+    private List<OwnershipHistory> ownershipHistory;
 }
+
 
 
 

@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Data
@@ -19,13 +20,17 @@ public class Plate {
 
     @JsonIgnore
     @ManyToOne
-    @JoinColumn(name = "owner_id", referencedColumnName = "id",  nullable = false)
+    @JoinColumn(name = "owner_id", referencedColumnName = "id",  nullable = true)
     private Owner owner;
     private String plateNumber;
     private Date issuedDate;
 
+
     @OneToOne
-    @JoinColumn(name = "vehicle-id" , referencedColumnName = "vehicleId")
+    @JoinColumn(name = "vehicle-id" , referencedColumnName = "vehicleId" , nullable = true)
     private Vehicle vehicle;
+
+    @OneToMany(mappedBy = "plate", cascade = CascadeType.ALL)
+    private List<OwnershipHistory> ownershipHistory;
 }
 

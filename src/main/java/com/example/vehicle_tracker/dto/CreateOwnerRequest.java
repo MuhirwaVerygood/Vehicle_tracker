@@ -14,9 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class CreateOwnerRequest {
-    @Valid
-    private List<PlateRequest> plates;
-
+    private int vehicleId;
+    private int plateId;   
     // Owner names: 2-50 chars, only letters/spaces/hyphens, no leading/trailing spaces
     @NotBlank(message = "Owner names are required")
     @Size(min = 2, max = 50, message = "Owner names must be 2-50 characters")
