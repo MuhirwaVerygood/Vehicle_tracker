@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -81,6 +83,7 @@ public class OwnerService {
         }
     }
 
+
     @Transactional
     public ResponseEntity<?> transferOwnership(TransferOwnershipRequest request) {
         try {
@@ -102,6 +105,7 @@ public class OwnerService {
                                 .build());
             }
 
+            // Close current ownership history
             OwnershipHistory currentHistory = ownershipHistoryRepository
                     .findByVehicleAndCurrentOwnership(vehicle.get(), true)
                     .orElseThrow(() -> new RuntimeException("No current ownership record found"));
@@ -110,14 +114,24 @@ public class OwnerService {
             currentHistory.setCurrentOwnership(false);
             ownershipHistoryRepository.save(currentHistory);
 
-            createOwnershipHistory(newOwner.get(), vehicle.get(), vehicle.get().getPlate());
+            // Create new ownership history with transfer price
+            OwnershipHistory newHistory = OwnershipHistory.builder()
+                    .owner(newOwner.get())
+                    .vehicle(vehicle.get())
+                    .plate(vehicle.get().getPlate())
+                    .startDate(LocalDateTime.now())
+                    .currentOwnership(true)
+                    .transferPrice(BigDecimal.valueOf(request.getTransferPrice()))
+                    .build();
+            ownershipHistoryRepository.save(newHistory);
 
+            // Update vehicle and plate relationships
             vehicle.get().setOwner(newOwner.get());
             vehicle.get().getPlate().setOwner(newOwner.get());
             vehicleRepository.save(vehicle.get());
             plateRepository.save(vehicle.get().getPlate());
 
-            return ResponseEntity.ok("Ownership transferred successfully");
+            return ResponseEntity.ok("Ownership transferred successfully with price: " + request.getTransferPrice());
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
                     ErrorResponse.builder()
@@ -126,7 +140,6 @@ public class OwnerService {
                             .build());
         }
     }
-
 
 
     public ResponseEntity<?> getOwnershipHistory(Long vehicleId) {

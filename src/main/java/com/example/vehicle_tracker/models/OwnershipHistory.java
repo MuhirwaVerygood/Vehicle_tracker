@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Entity
@@ -32,6 +34,9 @@ public class OwnershipHistory {
 
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+
+    @Column(name = "transfer_price")
+    private BigDecimal  transferPrice;
 
     @Column(name = "is_current")
     private boolean currentOwnership;

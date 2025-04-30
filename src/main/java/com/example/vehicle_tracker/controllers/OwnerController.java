@@ -46,6 +46,7 @@ public class OwnerController {
     }
 
 
+
     @GetMapping
     @PreAuthorize("hasAuthority('admin:read')")
     public ResponseEntity<String> authenticate(){

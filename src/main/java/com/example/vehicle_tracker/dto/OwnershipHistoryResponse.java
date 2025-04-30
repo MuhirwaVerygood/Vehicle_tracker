@@ -6,6 +6,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 
@@ -27,6 +28,7 @@ public class OwnershipHistoryResponse {
     private LocalDateTime endDate;
     private boolean current;
     private String duration; // Calculated field
+    private BigDecimal transferPrice;
 
     public static OwnershipHistoryResponse fromEntity(OwnershipHistory history) {
         return OwnershipHistoryResponse.builder()
@@ -45,6 +47,7 @@ public class OwnershipHistoryResponse {
                 .endDate(history.getEndDate())
                 .current(history.isCurrentOwnership())
                 .duration(calculateDuration(history.getStartDate(), history.getEndDate()))
+                .transferPrice(history.getTransferPrice())
                 .build();
     }
 
