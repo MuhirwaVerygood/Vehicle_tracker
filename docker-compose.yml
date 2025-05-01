@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  postgres:
+    container_name: postgres-sql
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: username
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: vehicle_tracker
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - spring-vehicle-tracker
+    restart: unless-stopped
+
+  vehicle-tracker:
+    container_name: vehicle-tracker-app
+    image: vehicle_tracker:1.0.0
+    environment:
+      APP_PROFILE: dev
+      DB_URL: jdbc:postgresql://postgres-sql:5432/vehicle_tracker
+      DB_USERNAME: username
+      DB_PASSWORD: password
+    ports:
+      - "8090:8090"
+    networks:
+      - spring-vehicle-tracker
+    depends_on:
+      - postgres
+    restart: unless-stopped
+
+networks:
+  spring-vehicle-tracker:
+    driver: bridge
+
+volumes:
+  postgres-data:
