@@ -1,5 +1,5 @@
-version: '3.8'
-
+# Docker Compose specification
+# version attribute removed as it's now obsolete
 services:
   postgres:
     container_name: postgres-sql
@@ -18,14 +18,15 @@ services:
 
   vehicle-tracker:
     container_name: vehicle-tracker-app
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: vehicle_tracker:1.0.0
     environment:
-      APP_PROFILE: dev
-      DB_URL: jdbc:postgresql://postgres-sql:5432/vehicle_tracker
       DB_USERNAME: username
       DB_PASSWORD: password
     ports:
-      - "8090:8090"
+      - "8900:8900"
     networks:
       - spring-vehicle-tracker
     depends_on:

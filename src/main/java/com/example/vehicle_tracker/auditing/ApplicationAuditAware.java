@@ -1,11 +1,9 @@
 package com.example.vehicle_tracker.auditing;
-
 import com.example.vehicle_tracker.models.User;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-
 import java.util.Optional;
 
 public class ApplicationAuditAware implements AuditorAware<Integer> {
