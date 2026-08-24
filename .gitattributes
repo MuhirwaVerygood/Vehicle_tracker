@@ -1,2 +1,5 @@
 /mvnw text eol=lf
 *.cmd text eol=crlf
+
+# Shell hooks must keep LF endings or they break on macOS/Linux.
+.githooks/** text eol=lf
